@@ -1,3 +1,4 @@
+import requests
 import urllib.request
 import wikipedia
 import html2text
@@ -14,6 +15,26 @@ def imgsave(page):
                 print("Got image")
                 return True
 
+def firstImg(page):
+    S = requests.Session()
+
+    URL = "https://en.wikipedia.org/w/api.php"
+
+    PARAMS = {
+        "action": "parse",
+        "page": page,
+        "format": "json"
+    }
+
+    R = S.get(url=URL, params=PARAMS)
+    DATA = R.json()
+
+    for lines in DATA["parse"]["text"]["*"].split("File:",2)[1:]:
+        if lines.split(".jpg",1)[1]:
+            imgname = lines.split(".jpg",1)[0]
+            break
+    return imgname
+
 
 wikiPage = wikipedia.page("Albert Einstein")
 
@@ -25,9 +46,13 @@ noun_set = set(blob.noun_phrases)
 for noun in noun_set:
     try:
         searchPage = wikipedia.search(noun)[0]
+        name = firstImg(searchPage)
+        print("img name ",name)
         for img in wikipedia.page(searchPage).images:
-            page = searchPage
-            if imgsave(page):
+            print("img : ", img)
+            if name in img:
+                urllib.request.urlretrieve(img, searchPage + ".jpg")
+                print("Got First image")
                 break
 
     except Exception:
@@ -35,7 +60,9 @@ for noun in noun_set:
 
 
 for link in wikiPage.links:
+    imgname = firstImg(link)
     for img in wikipedia.page(link).images:
-        page = link
-        if imgsave(page):
+        if imgname in img:
+            urllib.request.urlretrieve(img, link + ".jpg")
+            print("Got Link image")
             break
