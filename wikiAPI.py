@@ -25,10 +25,13 @@ def firstImg(page):
     DATA = R.json()
 
     for lines in DATA["parse"]["text"]["*"].split("File:",2)[1:]:
-        if lines.split(".jpg",1)[1]:
-            type = "jpg"
-            imgname = lines.split(".jpg",1)[0]
-            return urllib.parse.quote_plus(imgname), type
+        try:
+            if lines.split(".jpg",1)[1]:
+                type = "jpg"
+                imgname = lines.split(".jpg",1)[0]
+                return urllib.parse.quote_plus(imgname), type
+        except Exception:
+            pass
 
 def linemerge(line):
     for i in range(len(line)):
