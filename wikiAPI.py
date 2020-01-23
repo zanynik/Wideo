@@ -8,6 +8,7 @@ import html2text
 # from nltk.corpus import wordnet
 from textblob import TextBlob
 import string
+import json
 
 def firstImg(page):
     S = requests.Session()
@@ -28,47 +29,71 @@ def firstImg(page):
             type = "jpg"
             imgname = lines.split(".jpg",1)[0]
             return urllib.parse.quote_plus(imgname), type
-        if lines.split(".svg",1)[1]:
-            type = "svg"
-            imgname = lines.split(".svg",1)[0]
-            return urllib.parse.quote_plus(imgname), type
-        #Need to Encode the names
+
+def linemerge(line):
+    for i in range(len(line)):
+        if len(line[i]) < 20 and i > 1:
+            line[i-1:i+1] = [''.join(line[i-1:i+1])]
+            #print(line[i-1])
+            break
+        if i == len(line) - 2:
+            return
+    linemerge(line)
+
 
 wikiPage = wikipedia.page("Elinor Ostrom")
 
 text = wikiPage.content.split("references",1)[0]
-content = text.translate(str.maketrans('', '', string.punctuation))
-blob = TextBlob(content)
-noun_set = set(blob.noun_phrases)
+eachline = text.split(".")
+linemerge(eachline)
 refpages =[]
-for noun in noun_set:
-    pageset = set(refpages)
-    try:
-        searchPage = wikipedia.search(noun)[0]
-        name,ext = firstImg(searchPage)
-        print("img name ",name)
-        if name not in pageset:
-            for img in wikipedia.page(searchPage).images:
-                print("img : ", img)
-                if name in img:
-                    if ext == "jpg":
-                        urllib.request.urlretrieve(img, "Elinor/"+ searchPage + ".jpg")
-                        print("Got JPG image")
-                        break
-                    if ext == "svg":
-                        urllib.request.urlretrieve(img, "Elinor/"+ searchPage + ".svg")
-                        print("Got SVG image")
-                        break
-        refpages.append(name)
+dict_js = {}
+for i in range(len(eachline)):
+    content = eachline[i].translate(str.maketrans('', '', string.punctuation))
+    blob = TextBlob(content)
+    nouns = blob.noun_phrases
+    images=[]
+    for noun in nouns:
+        pageset = set(refpages)
+        try:
+            searchPage = wikipedia.search(noun)[0]
+            print(noun,"page :",searchPage)
+            name,ext = firstImg(searchPage)
+            print("img name ",name)
+            if name not in pageset:
+                for img in wikipedia.page(searchPage).images:
+                    print("img : ", img)
+                    if name in img:
+                        print("Here")
+                        if ext == "jpg":
+                            print("Here too")
+                            images += [img]
+                            print("Got JPG image")
+                            break
+                        if ext == "svg":
+                            urllib.request.urlretrieve(img, "Elinor/"+ searchPage + ".svg")
+                            print("Got SVG image")
+                            break
+            refpages.append(name)
+            print(refpages)
 
-    except Exception:
-        pass
+        except Exception:
+            pass
+    dict_js[i] = {'imageurl': images, 'line': content}
+    print(dict_js)
+    if i == 10:
+        with open("elinor.json", "w") as f:
+            json.dump(dict_js, f)
 
+        # To print out the JSON string (which you could then hardcode into the JS)
+        json.dumps(dict_js)
+        print("DONE")
+        break
 
-for link in wikiPage.links:
-    imgname = firstImg(link)
-    for img in wikipedia.page(link).images:
-        if imgname in img:
-            urllib.request.urlretrieve(img, "Elinor/"+link + ".jpg")
-            print("Got Link image")
-            break
+# for link in wikiPage.links:
+#     imgname = firstImg(link)
+#     for img in wikipedia.page(link).images:
+#         if imgname in img:
+#             urllib.request.urlretrieve(img, "Elinor/"+link + ".jpg")
+#             print("Got Link image")
+#             break
