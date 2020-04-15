@@ -81,18 +81,6 @@ img {vertical-align: middle;}
   to {opacity: 1}
 }
 
-@keyframes zoominoutsinglefeatured {
-    0% {
-        transform: scale(1,1);
-    }
-    50% {
-        transform: scale(1.2,1.2);
-    }
-    100% {
-        transform: scale(1,1);
-    }
-}
-
 .cardcontainer img {
     padding: 50px 15px 30px 20px;
     background: black;
@@ -100,7 +88,6 @@ img {vertical-align: middle;}
     max-width: 100%;
     height: auto;
     box-sizing: border-box;
-	animation: zoominoutsinglefeatured 25s infinite ;
 }
 
 /* On smaller screens, decrease text size */
@@ -126,7 +113,7 @@ img {vertical-align: middle;}
 var global = this;
 var array = [];
 var i = 0;
-$.getJSON('https://api.myjson.com/bins/n0srq', function (json) {
+$.getJSON('https://extendsclass.com/api/json-storage/bin/ecbaeac', function (json) {
       for (var key in json) {
           if (json.hasOwnProperty(key)) {
               var item = json[key];
