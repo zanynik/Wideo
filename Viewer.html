@@ -15,6 +15,7 @@ img {vertical-align: middle;}
   margin: auto;
 }
 
+
 /* Next & previous buttons */
 .prev, .next {
   cursor: pointer;
@@ -62,22 +63,6 @@ img {vertical-align: middle;}
   top: 0;
 }
 
-/* The dots/bullets/indicators */
-.dot {
-  cursor: pointer;
-  height: 15px;
-  width: 15px;
-  margin: 0 2px;
-  background-color: #bbb;
-  border-radius: 50%;
-  display: inline-block;
-  transition: background-color 0.6s ease;
-}
-
-.active, .dot:hover {
-  background-color: #717171;
-}
-
 /* Fading animation */
 .fade {
   -webkit-animation-name: fade;
@@ -96,6 +81,28 @@ img {vertical-align: middle;}
   to {opacity: 1}
 }
 
+@keyframes zoominoutsinglefeatured {
+    0% {
+        transform: scale(1,1);
+    }
+    50% {
+        transform: scale(1.2,1.2);
+    }
+    100% {
+        transform: scale(1,1);
+    }
+}
+
+.cardcontainer img {
+    padding: 50px 15px 30px 20px;
+    background: black;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    box-sizing: border-box;
+	animation: zoominoutsinglefeatured 25s infinite ;
+}
+
 /* On smaller screens, decrease text size */
 @media only screen and (max-width: 300px) {
   .prev, .next,.text {font-size: 11px}
@@ -108,10 +115,11 @@ img {vertical-align: middle;}
 
 <div class="mySlides fade">
   <div class="numbertext">1 / 3</div>
-  <img id="imageid" src="Einstein/Albert Einstein.jpg" style="width:100%">
+  <div class="cardcontainer"><img id="imageid" src="Wikipedia-logo-en-big.png" style="width:300px"></div>
   <div class="text">Caption Text</div>
+  <br>
   <button onclick="myFunction()">Play</button>
-  <script language="JavaScript" type="text/javascript" src="jquery-3.4.1.min.js"></script>
+  <script language="JavaScript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <!--<script language="JavaScript" type="text/javascript" src="/js/jquery-ui-personalized-1.5.2.packed.js"></script>-->
 <!--<script language="JavaScript" type="text/javascript" src="/js/sprinkle.js"></script>-->
   <script>
@@ -167,11 +175,6 @@ function myFunction() {
 <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
 <a class="next" onclick="plusSlides(1)">&#10095;</a>
 
-</div>
-<br>
-
-<div style="text-align:center">
-  <span class="dot" onclick="currentSlide(1)"></span>
 </div>
 
 </body>
